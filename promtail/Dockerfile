@@ -1,8 +1,7 @@
 ARG BUILD_FROM=ghcr.io/hassio-addons/debian-base/amd64:6.2.7
 ARG BUILD_ARCH=amd64
 
-# https://github.com/mdegat01/promtail-journal/releases
-#FROM ghcr.io/mdegat01/promtail-journal/${BUILD_ARCH}:1.6.0 as build_promtail
+FROM ghcr.io/efpe/promtail-journal/${BUILD_ARCH}:1.8.4 as build_promtail
 
 # https://github.com/hassio-addons/addon-debian-base/releases
 # hadolint ignore=DL3006
@@ -17,7 +16,7 @@ RUN echo "deb http://deb.debian.org/debian bullseye-backports main" >> /etc/apt/
 RUN apt-get update && apt-get install -t bullseye-backports -qy libsystemd-dev
 RUN set -eux; \
     apt-get update; \
-    apt-get install -qy --no-install-recommends \ 
+    apt-get install -qy --no-install-recommends \
         tar=1.34+dfsg-1 \
         ; \
     update-ca-certificates; \
@@ -41,7 +40,7 @@ RUN set -eux; \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*;
 
 # Add promtail
-COPY --from=grafana/promtail:latest /usr/bin/promtail /usr/bin/promtail
+COPY --from=build_promtail /usr/bin/promtail /usr/bin/promtail
 RUN promtail --version
 
 COPY rootfs /
