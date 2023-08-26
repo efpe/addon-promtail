@@ -1,5 +1,5 @@
-ARG BUILD_FROM
-ARG BUILD_ARCH
+ARG BUILD_FROM=ghcr.io/hassio-addons/debian-base/armv7:6.2.7
+ARG BUILD_ARCH=armv7
 
 FROM ghcr.io/efpe/promtail-journal/${BUILD_ARCH}:1.8.4 as build_promtail
 
@@ -12,13 +12,11 @@ ARG BUILD_ARCH=amd64
 ARG YQ_VERSION=4.27.3
 
 # Add yq and tzdata (required for the timestamp stage)
-RUN echo "deb http://deb.debian.org/debian bullseye-backports main" >> /etc/apt/sources.list
-RUN apt-get update && apt-get install -t bullseye-backports -qy libsystemd-dev
 RUN set -eux; \
+    echo "deb http://deb.debian.org/debian bullseye-backports main" >> /etc/apt/sources.list; \
     apt-get update; \
-    apt-get install -qy --no-install-recommends \
-        tar=1.34+dfsg-1 \
-        ; \
+    apt-get install -qy --no-install-recommends tar=1.34+dfsg-1; \
+    apt-get install -t bullseye-backports --no-install-recommends -qy libsystemd-dev=252.5-2~bpo11+1; \
     update-ca-certificates; \
     \
     case "${BUILD_ARCH}" in \
@@ -62,13 +60,13 @@ LABEL \
     io.hass.arch="${BUILD_ARCH}" \
     io.hass.type="addon" \
     io.hass.version=${BUILD_VERSION} \
-    maintainer="mdegat01" \
+    maintainer="efpe" \
     org.opencontainers.image.title="${BUILD_NAME}" \
     org.opencontainers.image.description="${BUILD_DESCRIPTION}" \
-    org.opencontainers.image.vendor="mdegat01's Home Assistant Add-ons" \
-    org.opencontainers.image.authors="mdegat01" \
+    org.opencontainers.image.vendor="efpe's Home Assistant Add-ons" \
+    org.opencontainers.image.authors="efpe" \
     org.opencontainers.image.licenses="MIT" \
-    org.opencontainers.image.url="https://github.com/mdegat01/hassio-addons" \
+    org.opencontainers.image.url="https://github.com/efpe/addon-promtail" \
     org.opencontainers.image.source="https://github.com/${BUILD_REPOSITORY}" \
     org.opencontainers.image.documentation="https://github.com/${BUILD_REPOSITORY}/blob/main/README.md" \
     org.opencontainers.image.created=${BUILD_DATE} \
