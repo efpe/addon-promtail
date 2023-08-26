@@ -1,5 +1,5 @@
-ARG BUILD_FROM=ghcr.io/hassio-addons/debian-base/amd64:6.2.7
-ARG BUILD_ARCH=amd64
+ARG BUILD_FROM
+ARG BUILD_ARCH
 
 FROM ghcr.io/efpe/promtail-journal/${BUILD_ARCH}:1.8.4 as build_promtail
 
@@ -26,7 +26,7 @@ RUN set -eux; \
         armhf)   BINARCH='arm' ;; \
         armv7)   BINARCH='arm' ;; \
         aarch64) BINARCH='arm64' ;; \
-        *) echo >&2 "error: unsupported architecture (${APKARCH})"; exit 1 ;; \
+        *) echo >&2 "error: unsupported architecture (${BUILD_ARCH})"; exit 1 ;; \
     esac; \
     curl -s -J -L -o /tmp/yq.tar.gz \
         "https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_linux_${BINARCH}.tar.gz"; \
